@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #F7F3EE;
+    color: #1C1917;
+    font-family: 'DM Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-accent text-white font-medium px-6 py-2.5 rounded-lg
+           hover:bg-opacity-90 active:scale-95 transition-all duration-150 text-sm;
+  }
+  .btn-ghost {
+    @apply border border-soft text-ink font-medium px-5 py-2.5 rounded-lg
+           hover:bg-soft transition-all duration-150 text-sm;
+  }
+  .input-field {
+    @apply w-full bg-white border border-soft rounded-lg px-4 py-2.5 text-sm text-ink
+           placeholder-muted focus:outline-none focus:border-accent transition-colors;
+  }
+  .label {
+    @apply block text-xs font-medium text-muted uppercase tracking-wider mb-1.5;
+  }
+  .card {
+    @apply bg-white border border-soft rounded-xl p-6 shadow-sm;
+  }
+  .status-badge {
+    @apply text-xs font-medium px-2.5 py-1 rounded-full;
+  }
+}
+
+.page-enter { animation: fadeUp 0.2s ease forwards; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
