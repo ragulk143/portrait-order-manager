@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../App";
 
+const PASSWORD = "zohraharts2206";
+
 const STATUS_CONFIG = {
   New:       { color: "bg-blue-100 text-blue-700",     dot: "bg-blue-500" },
   Drawing:   { color: "bg-amber-100 text-amber-700",   dot: "bg-amber-500" },
@@ -30,9 +32,11 @@ function InlineSelect({ value, options, onChange, config }) {
 }
 
 export default function Dashboard() {
-  const [orders, setOrders]   = useState([]);
+  const [auth, setAuth]     = useState(false);
+  const [pass, setPass]     = useState("");
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter]   = useState("All");
+  const [filter, setFilter] = useState("All");
   const navigate = useNavigate();
 
   const fetchOrders = useCallback(async () => {
@@ -44,7 +48,7 @@ export default function Dashboard() {
     finally   { setLoading(false); }
   }, []);
 
-  useEffect(() => { fetchOrders(); }, [fetchOrders]);
+  useEffect(() => { if (auth) fetchOrders(); }, [auth, fetchOrders]);
 
   const update = async (id, patch) => {
     const res = await fetch(`${API}/api/orders/${id}`, {
@@ -63,13 +67,46 @@ export default function Dashboard() {
     setOrders((prev) => prev.filter((o) => o.id !== id));
   };
 
+  // ── Password screen ──────────────────────────────────────────────────────────
+  if (!auth) return (
+    <div className="max-w-sm mx-auto mt-24">
+      <div className="card text-center">
+        <div className="text-4xl mb-4">🎨</div>
+        <h2 className="font-display text-xl font-bold text-ink mb-2">Artist Access Only</h2>
+        <p className="text-muted text-sm mb-6">Enter your password to view orders</p>
+        <input
+          className="input-field mb-3"
+          type="password"
+          placeholder="Enter password"
+          value={pass}
+          onChange={(e) => setPass(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              if (pass === PASSWORD) setAuth(true);
+              else alert("Wrong password!");
+            }
+          }}
+        />
+        <button
+          className="btn-primary w-full"
+          onClick={() => {
+            if (pass === PASSWORD) setAuth(true);
+            else alert("Wrong password!");
+          }}
+        >
+          Enter Dashboard
+        </button>
+      </div>
+    </div>
+  );
+
+  // ── Dashboard ────────────────────────────────────────────────────────────────
   const filtered = filter === "All" ? orders : orders.filter((o) => o.status === filter);
   const counts   = STATUSES.reduce((acc, s) => ({ ...acc, [s]: orders.filter((o) => o.status === s).length }), {});
   const fmtDate  = (d) => d ? new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) : "—";
 
   return (
     <div>
-      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-display text-3xl font-bold text-ink">Orders</h1>
@@ -78,7 +115,6 @@ export default function Dashboard() {
         <button onClick={fetchOrders} className="btn-ghost text-xs px-3 py-2">↻ Refresh</button>
       </div>
 
-      {/* Status summary cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         {STATUSES.map((s) => (
           <button key={s} onClick={() => setFilter((f) => f === s ? "All" : s)}
@@ -92,7 +128,6 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Table */}
       {loading ? (
         <div className="text-center py-20 text-muted">Loading orders…</div>
       ) : filtered.length === 0 ? (
@@ -101,15 +136,12 @@ export default function Dashboard() {
         </div>
       ) : (
         <div className="card p-0 overflow-hidden">
-          {/* Desktop */}
           <div className="hidden sm:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-soft bg-canvas">
                   {["Customer","People","Size","Deadline","Status","Payment",""].map((h, i) => (
-                    <th key={i} className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">
-                      {h}
-                    </th>
+                    <th key={i} className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -142,7 +174,6 @@ export default function Dashboard() {
             </table>
           </div>
 
-          {/* Mobile */}
           <div className="sm:hidden divide-y divide-soft">
             {filtered.map((o) => (
               <div key={o.id} onClick={() => navigate(`/orders/${o.id}`)}
@@ -176,3 +207,12 @@ export default function Dashboard() {
     </div>
   );
 }
+```
+
+**7.** Scroll down → click **"Commit changes"** → **"Commit changes"** again
+
+---
+
+Netlify will auto-redeploy in 2 minutes. Then go to:
+```
+https://portrait-order-manager.netlify.app/dashboard
