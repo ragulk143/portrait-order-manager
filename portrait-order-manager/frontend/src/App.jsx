@@ -1,9 +1,10 @@
 import { Routes, Route, NavLink, useLocation } from "react-router-dom";
-import OrderForm   from "./pages/OrderForm";
-import Dashboard   from "./pages/Dashboard";
-import OrderDetail from "./pages/OrderDetail";
+import OrderForm     from "./pages/OrderForm";
+import Dashboard     from "./pages/Dashboard";
+import OrderDetail   from "./pages/OrderDetail";
+import Gallery       from "./pages/Gallery";
+import ShopDashboard from "./pages/ShopDashboard";
 
-// Single place to change the API URL — reads from .env
 export const API = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 function Nav() {
@@ -11,17 +12,18 @@ function Nav() {
     <header className="bg-white border-b border-soft sticky top-0 z-50">
       <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
         <span className="font-display text-lg font-semibold text-ink">
-          <span className="text-accent">✦</span> Portrait Orders
+          <span className="text-accent">✦</span> Zohrah Arts
         </span>
-        <nav className="flex gap-1">
+        <nav className="flex gap-1 flex-wrap">
           {[
-            { to: "/",          label: "New Order",  end: true },
-            { to: "/dashboard", label: "Dashboard",  end: false },
+            { to: "/",               label: "Order",      end: true  },
+            { to: "/gallery",        label: "Shop",       end: false },
+            { to: "/dashboard",      label: "Dashboard",  end: false },
+            { to: "/shop-dashboard", label: "Shop Admin", end: false },
           ].map(({ to, label, end }) => (
-            <NavLink
-              key={to} to={to} end={end}
+            <NavLink key={to} to={to} end={end}
               className={({ isActive }) =>
-                `px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                `px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   isActive ? "bg-accent text-white" : "text-muted hover:text-ink hover:bg-soft"
                 }`
               }
@@ -43,9 +45,11 @@ export default function App() {
       <main className="max-w-5xl mx-auto px-4 py-8">
         <div key={location.pathname} className="page-enter">
           <Routes>
-            <Route path="/"           element={<OrderForm />} />
-            <Route path="/dashboard"  element={<Dashboard />} />
-            <Route path="/orders/:id" element={<OrderDetail />} />
+            <Route path="/"               element={<OrderForm />} />
+            <Route path="/gallery"        element={<Gallery />} />
+            <Route path="/dashboard"      element={<Dashboard />} />
+            <Route path="/shop-dashboard" element={<ShopDashboard />} />
+            <Route path="/orders/:id"     element={<OrderDetail />} />
           </Routes>
         </div>
       </main>
