@@ -207,12 +207,4 @@ export default function Dashboard() {
     </div>
   );
 }
-```
 
-**7.** Scroll down → click **"Commit changes"** → **"Commit changes"** again
-
----
-
-Netlify will auto-redeploy in 2 minutes. Then go to:
-```
-https://portrait-order-manager.netlify.app/dashboard
